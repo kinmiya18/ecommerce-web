@@ -12,6 +12,7 @@ import IconEyeToggle from "../../components/icons/IconEyeToggle";
 import useToggleValue from "../../components/hooks/useToogleValue";
 import LayoutAuthentication from "../../components/layout/LayoutAuthentication";
 
+const apiURL = process.env.REACT_APP_API_URL;
 // Validation schema using Yup
 const schema = yup.object({
   username: yup.string().required("Username is required"),
@@ -23,12 +24,17 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
 
-  const { value: showPassword, handleToggleValue: togglePasswordVisibility } = useToggleValue();
+  const { value: showPassword, handleToggleValue: togglePasswordVisibility } =
+    useToggleValue();
 
   // Login handler
   const handleLogin = async (values) => {
@@ -39,8 +45,8 @@ const Login = () => {
       const payload = new URLSearchParams();
       payload.append("username", values.username);
       payload.append("password", values.password);
-
-      const response = await axios.post("https://testbe-1.onrender.com/login", payload, {
+      console.log(apiURL);
+      const response = await axios.post(`${apiURL}/login`, payload, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -62,7 +68,8 @@ const Login = () => {
       }
     } catch (error) {
       if (error.response) {
-        const serverError = error.response.data.detail || error.response.data.message;
+        const serverError =
+          error.response.data.detail || error.response.data.message;
         setErrorMessage(serverError || "Invalid login credentials.");
       } else {
         setErrorMessage("Unable to connect to the server. Please try again.");
@@ -74,7 +81,10 @@ const Login = () => {
 
   return (
     <LayoutAuthentication heading="Welcome Back">
-      <form onSubmit={handleSubmit(handleLogin)} className="w-full max-w-md mx-auto">
+      <form
+        onSubmit={handleSubmit(handleLogin)}
+        className="w-full max-w-md mx-auto"
+      >
         {errorMessage && (
           <div className="bg-red-500 text-white text-center py-2 mb-4 rounded">
             {errorMessage}
@@ -101,20 +111,28 @@ const Login = () => {
             placeholder="Enter your password"
             error={errors.password?.message}
           >
-            <IconEyeToggle open={showPassword} onClick={togglePasswordVisibility} />
+            <IconEyeToggle
+              open={showPassword}
+              onClick={togglePasswordVisibility}
+            />
           </Input>
         </FormGroup>
 
         <Button
           type="submit"
-          className={`w-full mt-4 ${loading ? "opacity-50 pointer-events-none" : ""}`}
+          className={`w-full mt-4 ${
+            loading ? "opacity-50 pointer-events-none" : ""
+          }`}
         >
           {loading ? "Logging in..." : "Login"}
         </Button>
 
         <div className="mt-4 text-center">
           <p className="text-gray-600">
-            Don't have an account? <a href="/auth/sign-up" className="text-blue-500">Sign Up</a>
+            Don't have an account?{" "}
+            <a href="/auth/sign-up" className="text-blue-500">
+              Sign Up
+            </a>
           </p>
         </div>
       </form>

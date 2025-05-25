@@ -3,10 +3,9 @@ import axios from "axios";
 import Header from "../components/HomePage/Header/Header";
 import Subscribe from "../components/ShopPage/Subscribe/Subscribe";
 import Footer from "../components/ShopPage/Footer/Footer";
-import "./AccountPageUser.css"
+import "./AccountPageUser.css";
 
 const AccountPageUser = () => {
-
   const apiURL = process.env.REACT_APP_API_URL;
 
   const [userInfo, setUserInfo] = useState({});
@@ -61,10 +60,10 @@ const AccountPageUser = () => {
       console.log(`Fetching order items for order ID: ${orderId}`); // Gỡ lỗi
 
       const orderItemsResponse = await axios.get(
-          `${apiURL}/orders/${orderId}/items`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        `${apiURL}/orders/${orderId}/items`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       const orderItems = orderItemsResponse.data;
@@ -82,10 +81,10 @@ const AccountPageUser = () => {
       // Lấy thông tin chi tiết sản phẩm từ product_id
       for (let item of orderItems) {
         const productResponse = await axios.get(
-            `${apiURL}/products/${item.product_id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
+          `${apiURL}/products/${item.product_id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
 
         productDetails.push({
@@ -110,97 +109,102 @@ const AccountPageUser = () => {
   };
 
   return (
-      <>
-        <Header />
-        <div className="account-user-container">
-          <div className="account-page">
-            <div className="infor-user">
-              <h1>Thông tin cá nhân:</h1>
-              <div className="inner-infor-user">
-                <p>Tên: {userInfo.last_name || "N/A"}</p>
-                <p>Email: {userInfo.email || "N/A"}</p>
-                <p>Số điện thoại: {userInfo.phone_number || "N/A"}</p>
-              </div>
+    <>
+      <Header />
+      <div className="account-user-container">
+        <div className="account-page">
+          <div className="infor-user">
+            <h1>Thông tin cá nhân:</h1>
+            <div className="inner-infor-user">
+              <p>Tên: {userInfo.last_name || "N/A"}</p>
+              <p>Email: {userInfo.email || "N/A"}</p>
+              <p>Số điện thoại: {userInfo.phone_number || "N/A"}</p>
             </div>
+          </div>
 
-            <div className="table-order">
-              <h2>Đơn hàng đã tạo:</h2>
-              <table>
-                <thead>
+          <div className="table-order">
+            <h2>Đơn hàng đã tạo:</h2>
+            <table>
+              <thead>
                 <tr>
                   <th>Ngày</th>
                   <th>Tổng số tiền</th>
                   <th>Trạng thái vận chuyển</th>
                   <th>Sản phẩm</th>
                 </tr>
+              </thead>
+              <tbody>
+                {orders.length > 0 ? (
+                  orders.map((order) => (
+                    <tr key={order.id}>
+                      <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                      <td>{order.total_price.toLocaleString()} VND</td>
+                      <td>{order.status}</td>
+                      <td>
+                        <button onClick={() => handleOrderClick(order)}>
+                          Xem chi tiết
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5">Không tìm thấy sản phẩm.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {loading && <p>Loading...</p>}
+
+          {orderDetails && orderDetails.length > 0 ? (
+            <div>
+              <h3>Chi tiết đơn hàng:</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sản phẩm</th>
+                    <th>Ảnh</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Tổng số tiền</th>
+                  </tr>
                 </thead>
                 <tbody>
-                {orders.length > 0 ? (
-                    orders.map((order) => (
-                        <tr key={order.id}>
-                          <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                          <td>{order.total_price.toLocaleString()} VND</td>
-                          <td>{order.status}</td>
-                          <td>
-                            <button onClick={() => handleOrderClick(order)}>Xem chi tiết</button>
-                          </td>
-                        </tr>
-                    ))
-                ) : (
-                    <tr>
-                      <td colSpan="5">Không tìm thấy sản phẩm.</td>
+                  {orderDetails.map((product, index) => (
+                    <tr key={index}>
+                      <td>{product.name}</td>
+                      <td>
+                        <img
+                          src={product.image || "placeholder.jpg"}
+                          alt={product.name || "No Image"}
+                          width="50"
+                        />
+                      </td>
+                      <td>{product.quantity}</td>
+                      <td>{product.price_per_item.toLocaleString()} VND</td>
+                      <td>
+                        {(
+                          product.price_per_item * product.quantity
+                        ).toLocaleString()}{" "}
+                        VND
+                      </td>
                     </tr>
-                )}
+                  ))}
                 </tbody>
               </table>
             </div>
-
-
-            {loading && <p>Loading...</p>}
-
-            {orderDetails && orderDetails.length > 0 ? (
-                <div>
-                  <h3>Chi tiết đơn hàng:</h3>
-                  <table>
-                    <thead>
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Ảnh</th>
-                      <th>Số lượng</th>
-                      <th>Giá</th>
-                      <th>Tổng số tiền</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {orderDetails.map((product, index) => (
-                        <tr key={index}>
-                          <td>{product.name}</td>
-                          <td>
-                            <img
-                                src={product.image || "placeholder.jpg"}
-                                alt={product.name || "No Image"}
-                                width="50"
-                            />
-                          </td>
-                          <td>{product.quantity}</td>
-                          <td>{product.price_per_item.toLocaleString()} VND</td>
-                          <td>{(product.price_per_item * product.quantity).toLocaleString()} VND</td>
-                        </tr>
-                    ))}
-                    </tbody>
-                  </table>
-                </div>
-            ) : (
-                !loading && <p>Không tìm thấy sản phẩm trong đơn hàng.</p>
-            )}
-          </div>
+          ) : (
+            !loading && <p>Không tìm thấy sản phẩm trong đơn hàng.</p>
+          )}
         </div>
+      </div>
 
-        <Subscribe />
-        <hr></hr>
-        <Footer />
-      </>
-
+      <Subscribe />
+      <hr></hr>
+      <Footer />
+    </>
   );
 };
 
