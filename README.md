@@ -30,5 +30,4 @@ Dự án **Ecommerce Web** là một nền tảng thương mại điện tử, n
 
 ---
 Link sản phẩm: https://ecommerce-frontend-05tt.onrender.com
-## Tài liệu thiết kế
-- [Xem file thiết kế trên Figma](https://www.figma.com/design/vXcLAUa8hHukZr57dA7J75/Ecomerce-web-2?node-id=0-1&t=3V9k1jk1Go4NdSg5-1)
+
