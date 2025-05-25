@@ -13,6 +13,10 @@ RUN npm install --prefer-offline
 # Sao chép toàn bộ mã nguồn vào image
 COPY . .
 
+# Dùng ARG để truyền biến build-time
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Build ứng dụng React
 RUN npm run build
 
